@@ -1,0 +1,7 @@
+apiVersion: "koudingspawn.de/v1"
+kind: Vault
+metadata:
+    name: registry-credentials
+spec:
+    path: "kubernetes-secrets/registry-credentials"
+    type: "DOCKERCFG"

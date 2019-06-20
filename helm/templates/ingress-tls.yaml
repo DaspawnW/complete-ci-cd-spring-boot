@@ -1,0 +1,12 @@
+{{ if .Values.ingress.tls }}
+{{- range .Values.ingress.tls }}
+apiVersion: "koudingspawn.de/v1"
+kind: Vault
+metadata:
+    name: {{ .secretName }}
+spec:
+    path: "{{ .vaultPath }}"
+    type: "{{ .vaultType }}"
+---
+{{- end }}
+{{ end }}

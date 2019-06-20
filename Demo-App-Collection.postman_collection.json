@@ -1,0 +1,127 @@
+{
+	"info": {
+		"name": "Demo App Collection",
+		"_postman_id": "00d7cccf-46ca-45eb-6f5e-5258bd86bb82",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Calculate price for valid source and destination",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "af837e12-3e71-4bf9-ac35-6dc5de94bd0a",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Validate response content for source street\", function () {",
+							"    pm.expect(jsonData.source.street).to.contain(\"Virchowstraße\");",
+							"});",
+							"    ",
+							"pm.test(\"Validate response content for destination street\", function() {",
+							"    pm.expect(jsonData.destination.street).to.contain(\"Goethestraße\");",
+							"});",
+							"",
+							"pm.test(\"Validate response content for distance in Kilometer to be above 1\", function() {",
+							"    pm.expect(jsonData.driving.distanceInKilometer).to.be.above(1);",
+							"});",
+							"",
+							"pm.test(\"Validate response content for duration to be above 5 minuntes\", function() {",
+							"    pm.expect(jsonData.driving.durationInMinutes).to.be.above(5);",
+							"});",
+							"",
+							"pm.test(\"Validate response content for price to be 27 Euro\", function() {",
+							"    var price = Math.trunc(jsonData.price);",
+							"    pm.expect(price).to.be.equal(27);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"source\": {\n\t\t\"street\": \"Virchowstraße 167a\",\n\t\t\"zipCode\": \"45147\",\n\t\t\"city\": \"Essen\",\n\t\t\"country\": \"de\"\n\t},\n\t\"destination\": {\n\t\t\"street\": \"Goethestraße 41\",\n\t\t\"zipCode\": \"45128\",\n\t\t\"city\": \"Essen\",\n\t\t\"country\": \"de\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/pricing",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"pricing"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Fail to calculate price because locations not exist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0bfa8a4d-2df1-4a90-9a45-49efff76f6fe",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Request is failed with status code 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Validate response content to contain failure message\", function () {",
+							"    pm.expect(jsonData.message).to.equals(\"No pricing available for the specified source and destination!\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"source\": {\n\t\t\"street\": \"Entenhausenstraße 100000\",\n\t\t\"zipCode\": \"45147\",\n\t\t\"city\": \"Essen\",\n\t\t\"country\": \"de\"\n\t},\n\t\"destination\": {\n\t\t\"street\": \"Tor zur Hölle\",\n\t\t\"zipCode\": \"45128\",\n\t\t\"city\": \"Essen\",\n\t\t\"country\": \"de\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/pricing",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"pricing"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "7c36e4cc-2109-4bd4-a2c3-ac45189d343d",
+			"key": "url",
+			"value": "https://demo-master.home.koudingspawn.de",
+			"type": "text"
+		}
+	]
+}
